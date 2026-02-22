@@ -1,5 +1,5 @@
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
-import { useShots } from '@/features/shotGraph/api/get-shots';
+import { useShots } from '@/features/shotAnalysis/api/get-shots';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import type { DateRange } from 'react-day-picker';

@@ -7,7 +7,6 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { useShots } from '../../api/get-shots';
 import {
   Table,
   TableBody,
@@ -28,11 +27,13 @@ import { columns } from './columns';
 import { DataTablePagination } from '@/components/ui/table-pagination';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldLabel } from '@/components/ui/field';
+import type { Shot } from '@/types/shot';
 
-export function ShotTable() {
-  const { data } = useShots({});
-  const shots = data?.shots || [];
+type ShotTableProps = {
+  shots: Shot[];
+};
 
+export function ShotTable({ shots }: ShotTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -93,13 +94,13 @@ export function ShotTable() {
         <Field orientation="horizontal">
           <Checkbox
             id="remove-empty-columns"
-            defaultChecked={true}
+            checked={!table.getColumn('club_speed')?.getIsVisible()}
             onCheckedChange={(value) => {
               toggleClubDataColumns(!value);
             }}
           />
           <FieldLabel htmlFor="remove-empty-columns">
-            Remove empty columns
+            Hide Club Data Columns
           </FieldLabel>
         </Field>
       </div>
@@ -121,7 +122,7 @@ export function ShotTable() {
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length &&
+          {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -133,7 +134,14 @@ export function ShotTable() {
                   </TableCell>
                 ))}
               </TableRow>
-            ))}
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
       <DataTablePagination table={table} />
