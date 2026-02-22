@@ -73,13 +73,14 @@ export const columns: ColumnDef<Shot>[] = [
   {
     accessorKey: 'spin_axis',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Spin Axis (°)" />
+      <DataTableColumnHeader column={column} title="Spin Axis" />
     ),
     cell: (info) => (
       <div>{DirectionFormatter(info.getValue() as number, '°')}</div>
     ),
   },
   {
+    id: 'club_speed',
     accessorKey: 'club_speed',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Club Speed (mph)" />

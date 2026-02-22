@@ -65,7 +65,6 @@ export function ShotGraph() {
           tip: true,
         }),
       ],
-      title: `Shot Carry Distance vs. Offline`,
     });
     containerRef.current.append(plot);
     return () => plot.remove();
@@ -73,7 +72,7 @@ export function ShotGraph() {
 
   return (
     <>
-      <div className="mt-4">
+      <div className="m-4">
         <DatePickerWithRange date={date} setDate={setDate} />
         <div className="mt-4">
           {Object.entries(clubs).map(([club, count]) => (
@@ -99,9 +98,9 @@ export function ShotGraph() {
               filter === 'all' ? setFilter({}) : setFilter('all')
             }
           >
-            {filter === null
-              ? `Select all ${shots.length} shots`
-              : `Deselect all ${shots.length} shots`}
+            {filter === 'all'
+              ? `Deselect all ${shots.length} shots`
+              : `Select all ${shots.length} shots`}
           </Button>
         </div>
         <div className="mt-4" ref={containerRef}></div>

@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { columns } from './columns';
 import { DataTablePagination } from '@/components/ui/table-pagination';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Field, FieldLabel } from '@/components/ui/field';
 
 export function ShotTable() {
   const { data } = useShots({});
@@ -33,6 +35,17 @@ export function ShotTable() {
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+
+  const toggleClubDataColumns = (value: boolean) => {
+    setColumnVisibility({
+      club_speed: value,
+    });
+  };
+
+  useEffect(() => {
+    if (shots.length === 0 || shots[0]?.club_speed !== 0) return;
+    toggleClubDataColumns(false);
+  }, [shots]);
 
   const table = useReactTable({
     data: shots,
@@ -49,32 +62,47 @@ export function ShotTable() {
   });
 
   return (
-    <div className="mt-4 mb-8">
-      <div>Shot Table</div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="ml-auto">
-            Filter Columns
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {table
-            .getAllColumns()
-            .filter((column) => column.getCanHide())
-            .map((column) => {
-              return (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id.replaceAll('_', ' ')}
-                </DropdownMenuCheckboxItem>
-              );
-            })}
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <div className="m-4">
+      <div className="flex items-center mb-4 gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Filter Columns
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id.replaceAll('_', ' ')}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Field orientation="horizontal">
+          <Checkbox
+            id="remove-empty-columns"
+            defaultChecked={true}
+            onCheckedChange={(value) => {
+              toggleClubDataColumns(!value);
+            }}
+          />
+          <FieldLabel htmlFor="remove-empty-columns">
+            Remove empty columns
+          </FieldLabel>
+        </Field>
+      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
