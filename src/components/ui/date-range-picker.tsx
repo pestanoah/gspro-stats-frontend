@@ -1,19 +1,19 @@
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Field } from '@/components/ui/field'
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Field } from '@/components/ui/field';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
-import { type DateRange } from 'react-day-picker'
+} from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { type DateRange } from 'react-day-picker';
 
 type DateRangePickerProps = {
-  date: DateRange | undefined
-  setDate: (date: DateRange | undefined) => void
-}
+  date: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
+};
 
 export function DatePickerWithRange({ date, setDate }: DateRangePickerProps) {
   return (
@@ -51,5 +51,5 @@ export function DatePickerWithRange({ date, setDate }: DateRangePickerProps) {
         </PopoverContent>
       </Popover>
     </Field>
-  )
+  );
 }

@@ -1,38 +1,38 @@
-import { useShots } from '../api/get-shots'
-import { useEffect, useRef, useState } from 'react'
-import * as Plot from '@observablehq/plot'
-import { Toggle } from '@/components/ui/toggle'
-import { Button } from '@/components/ui/button'
-import { DateRange } from 'react-day-picker'
-import { DatePickerWithRange } from '@/components/ui/date-range-picker'
-import { TickFormatter } from '../utils/shot-utils'
+import { useShots } from '../../api/get-shots';
+import { useEffect, useRef, useState } from 'react';
+import * as Plot from '@observablehq/plot';
+import { Toggle } from '@/components/ui/toggle';
+import { Button } from '@/components/ui/button';
+import { DateRange } from 'react-day-picker';
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
+import { TickFormatter } from '../../utils/shot-utils';
 
 export function ShotGraph() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [filter, setFilter] = useState<Record<string, any> | null>()
-  const [date, setDate] = useState<DateRange | undefined>()
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [filter, setFilter] = useState<Record<string, any> | 'all'>('all');
+  const [date, setDate] = useState<DateRange | undefined>();
 
   const { data } = useShots({
     startDate: date?.from,
     endDate: date?.to,
-  })
-  const shots = data?.shots || []
+  });
+  const shots = data?.shots || [];
   const filteredShots = shots.filter(
-    (shot) => filter == null || shot.club_name in filter,
-  )
+    (shot) => filter == 'all' || shot.club_name in filter,
+  );
 
-  const clubs: Record<string, number> = {} // maps a club to the number of shots hit with it
+  const clubs: Record<string, number> = {}; // maps a club to the number of shots hit with it
 
   shots.forEach((shot) => {
     if (clubs[shot.club_name]) {
-      clubs[shot.club_name]++
+      clubs[shot.club_name]++;
     } else {
-      clubs[shot.club_name] = 1
+      clubs[shot.club_name] = 1;
     }
-  })
+  });
 
   useEffect(() => {
-    if (data === undefined || containerRef.current === null) return
+    if (data === undefined || containerRef.current === null) return;
     const plot = Plot.plot({
       y: {
         grid: true,
@@ -66,10 +66,10 @@ export function ShotGraph() {
         }),
       ],
       title: `Shot Carry Distance vs. Offline`,
-    })
-    containerRef.current.append(plot)
-    return () => plot.remove()
-  }, [filteredShots])
+    });
+    containerRef.current.append(plot);
+    return () => plot.remove();
+  }, [filteredShots]);
 
   return (
     <>
@@ -79,25 +79,33 @@ export function ShotGraph() {
           {Object.entries(clubs).map(([club, count]) => (
             <Toggle
               key={club}
-              pressed={filter ? club in filter : false}
+              pressed={filter === 'all' ? true : club in filter}
               variant="outline"
               onClick={() => {
-                const newFilter = filter || {}
+                const newFilter = filter === 'all' ? {} : filter || {};
                 club in newFilter
                   ? delete newFilter[club]
-                  : (newFilter[club] = true)
-                setFilter({ ...newFilter })
+                  : (newFilter[club] = true);
+                setFilter({ ...newFilter });
               }}
             >
               {club}: {count} shots
             </Toggle>
           ))}
-          <Button key="all" variant="outline" onClick={() => setFilter(null)}>
-            All clubs: {shots.length} shots
+          <Button
+            key="all"
+            variant="outline"
+            onClick={() =>
+              filter === 'all' ? setFilter({}) : setFilter('all')
+            }
+          >
+            {filter === null
+              ? `Select all ${shots.length} shots`
+              : `Deselect all ${shots.length} shots`}
           </Button>
         </div>
         <div className="mt-4" ref={containerRef}></div>
       </div>
     </>
-  )
+  );
 }

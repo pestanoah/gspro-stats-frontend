@@ -1,6 +1,6 @@
-import { queryConfig } from '@/lib/react-query'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState, type ReactNode } from 'react'
+import { queryConfig } from '@/lib/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState, type ReactNode } from 'react';
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [queryClient] = useState(
@@ -8,11 +8,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       new QueryClient({
         defaultOptions: queryConfig,
       }),
-  )
+  );
 
   return (
     <>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </>
-  )
-}
+  );
+};

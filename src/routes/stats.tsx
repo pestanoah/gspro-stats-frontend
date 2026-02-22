@@ -1,68 +1,68 @@
-import { DatePickerWithRange } from '@/components/ui/date-range-picker'
-import { useShots } from '@/features/shotGraph/api/get-shots'
-import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
-import type { DateRange } from 'react-day-picker'
-import { Button } from '@/components/ui/button'
-import { Toggle } from '@/components/ui/toggle'
-import { quantile, standardDeviation } from 'simple-statistics'
-import * as Plot from '@observablehq/plot'
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
+import { useShots } from '@/features/shotGraph/api/get-shots';
+import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useRef, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
+import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
+import { quantile, standardDeviation } from 'simple-statistics';
+import * as Plot from '@observablehq/plot';
 
 export const Route = createFileRoute('/stats')({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [date, setDate] = useState<DateRange | undefined>()
-  const [filter, setFilter] = useState<Record<string, any> | null>()
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [date, setDate] = useState<DateRange | undefined>();
+  const [filter, setFilter] = useState<Record<string, any> | null>();
 
   const { data } = useShots({
     startDate: date?.from,
     endDate: date?.to,
-  })
-  const shots = data?.shots || []
+  });
+  const shots = data?.shots || [];
   const filteredShots = shots.filter(
     (shot) => filter == null || shot.club_name in filter,
-  )
+  );
 
-  const clubs: Record<string, number> = {} // maps a club to the number of shots hit with it
+  const clubs: Record<string, number> = {}; // maps a club to the number of shots hit with it
 
   shots.forEach((shot) => {
     if (clubs[shot.club_name]) {
-      clubs[shot.club_name]++
+      clubs[shot.club_name]++;
     } else {
-      clubs[shot.club_name] = 1
+      clubs[shot.club_name] = 1;
     }
-  })
+  });
 
-  const dispersionRange = [0, 0]
-  const carryDistanceRange = [Infinity, 0]
+  const dispersionRange = [0, 0];
+  const carryDistanceRange = [Infinity, 0];
 
-  const offlineData: number[] = []
-  const carryDistanceData: number[] = []
+  const offlineData: number[] = [];
+  const carryDistanceData: number[] = [];
 
   filteredShots.forEach((shot) => {
-    offlineData.push(shot.offline)
-    carryDistanceData.push(shot.carry_distance)
+    offlineData.push(shot.offline);
+    carryDistanceData.push(shot.carry_distance);
 
     if (shot.offline > dispersionRange[1]) {
-      dispersionRange[1] = shot.offline
+      dispersionRange[1] = shot.offline;
     } else if (shot.offline < dispersionRange[0]) {
-      dispersionRange[0] = shot.offline
+      dispersionRange[0] = shot.offline;
     }
 
     if (shot.carry_distance < carryDistanceRange[0]) {
-      carryDistanceRange[0] = shot.carry_distance
+      carryDistanceRange[0] = shot.carry_distance;
     } else if (shot.carry_distance > carryDistanceRange[1]) {
-      carryDistanceRange[1] = shot.carry_distance
+      carryDistanceRange[1] = shot.carry_distance;
     }
-  })
+  });
 
   // set up the dispersion box plot
   useEffect(() => {
     if (offlineData.length === 0 || containerRef.current === null) {
-      return
+      return;
     }
     const plot = Plot.plot({
       width: 900,
@@ -75,13 +75,13 @@ function RouteComponent() {
         }),
       ],
       title: 'Shot Dispersion (yards)',
-    })
+    });
 
-    containerRef.current.append(plot)
+    containerRef.current.append(plot);
     return () => {
-      plot.remove()
-    }
-  }, [offlineData])
+      plot.remove();
+    };
+  }, [offlineData]);
 
   return (
     <>
@@ -93,11 +93,11 @@ function RouteComponent() {
             key={club}
             variant="outline"
             onClick={() => {
-              const newFilter = filter || {}
+              const newFilter = filter || {};
               club in newFilter
                 ? delete newFilter[club]
-                : (newFilter[club] = true)
-              setFilter({ ...newFilter })
+                : (newFilter[club] = true);
+              setFilter({ ...newFilter });
             }}
           >
             {club}: {count} shots
@@ -127,5 +127,5 @@ function RouteComponent() {
         <div ref={containerRef}></div>
       </div>
     </>
-  )
+  );
 }

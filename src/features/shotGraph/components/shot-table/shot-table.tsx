@@ -6,8 +6,8 @@ import {
   SortingState,
   useReactTable,
   type VisibilityState,
-} from '@tanstack/react-table'
-import { useShots } from '../../api/get-shots'
+} from '@tanstack/react-table';
+import { useShots } from '../../api/get-shots';
 import {
   Table,
   TableBody,
@@ -15,24 +15,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/table';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { columns } from './columns'
-import { DataTablePagination } from '@/components/ui/table-pagination'
+} from '@/components/ui/dropdown-menu';
+import { columns } from './columns';
+import { DataTablePagination } from '@/components/ui/table-pagination';
 
 export function ShotTable() {
-  const { data } = useShots({})
-  const shots = data?.shots || []
+  const { data } = useShots({});
+  const shots = data?.shots || [];
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data: shots,
@@ -46,7 +46,7 @@ export function ShotTable() {
       sorting,
       columnVisibility,
     },
-  })
+  });
 
   return (
     <div className="mt-4 mb-8">
@@ -71,7 +71,7 @@ export function ShotTable() {
                 >
                   {column.id.replaceAll('_', ' ')}
                 </DropdownMenuCheckboxItem>
-              )
+              );
             })}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -110,5 +110,5 @@ export function ShotTable() {
       </Table>
       <DataTablePagination table={table} />
     </div>
-  )
+  );
 }

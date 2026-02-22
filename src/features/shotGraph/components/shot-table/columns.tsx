@@ -1,7 +1,7 @@
-import type { Shot } from '@/types/shot'
-import type { ColumnDef } from '@tanstack/react-table'
-import { DirectionFormatter } from '../../utils/shot-utils'
-import { DataTableColumnHeader } from '@/components/ui/data-table-column-header'
+import type { Shot } from '@/types/shot';
+import type { ColumnDef } from '@tanstack/react-table';
+import { DirectionFormatter } from '../../utils/shot-utils';
+import { DataTableColumnHeader } from '@/components/ui/data-table-column-header';
 
 export const columns: ColumnDef<Shot>[] = [
   {
@@ -85,4 +85,4 @@ export const columns: ColumnDef<Shot>[] = [
       <DataTableColumnHeader column={column} title="Club Speed (mph)" />
     ),
   },
-]
+];

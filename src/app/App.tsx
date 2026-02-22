@@ -1,9 +1,9 @@
-import { AppProvider } from './provider'
+import { AppProvider } from './provider';
 
 type AppProps = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export default function App({ children }: AppProps) {
-  return <AppProvider>{children}</AppProvider>
+  return <AppProvider>{children}</AppProvider>;
 }
